@@ -87,9 +87,23 @@ local function GetNextComponent(unit, item)
   return components[1]
 end
 
-local function hasFullInventory(unit)
-  local inventory = unit:GetInventory(false)
-  return (#inventory == 6 )
+local function hasFullInventory(unit, checkStashonly)
+  local inventory = nil
+  local startNum = 1
+  if not checkStashonly then
+    inventory = unit:GetInventory(false)
+  else
+    inventory = unit:GetInventory(true)
+    startNum = 7
+  end
+
+  for slot = startNum,#inventory,1 do
+    local item = inventory[slot]
+    if not item then
+      return false
+    end
+  end
+  return true
 end
 
 local function foundElementInList(item, list)
@@ -102,14 +116,22 @@ local function foundElementInList(item, list)
   return false
 end
 
-local function sellCheapestItem(unit, ignoreItems)
+local function sellCheapestItem(unit, ignoreItems, checkStashonly)
   if not ignoreItems then
     ignoreItems = {}
   end
-  local inventory = unit:GetInventory(false)
+  local inventory = nil
+  local startNum = 1
+  if not checkStashonly then
+    inventory = unit:GetInventory(false)
+  else
+    inventory = unit:GetInventory(true)
+    startNum = 7
+  end
+
   local index = -1
   local cost = 9999
-  for slot = 1,#inventory,1 do
+  for slot = startNum,#inventory,1 do
     local item = inventory[slot]
     if item then
       local itemname = HoN.GetItemDefinition(item:GetTypeName())
@@ -126,7 +148,9 @@ local function sellCheapestItem(unit, ignoreItems)
     return
   end
 
+  local toSell = inventory[index]:GetTypeName()
   unit:SellBySlot(index)
+  Echo("Sold: " .. toSell)
 end
 
 local function CountItemAmount(unit, item)
