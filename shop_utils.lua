@@ -51,14 +51,16 @@ local function HasItem(unit, item)
   local ItemToFind = item
   for slot = 1, #inventory, 1 do
     local curItem = inventory[slot]
-    local curItemDef = HoN.GetItemDefinition(curItem:GetTypeName())
-    --Echo(tostring(curItem))
     if curItem then
-      --Echo(curItem:GetName())
-      local bRecipeCheck = curItemDef:GetTypeID() ~= item:GetTypeID() or curItem:IsRecipe()
-      if curItem:GetTypeID() == item:GetTypeID() and not bRecipeCheck then
-        --Echo("Was true")
-        return true
+      local curItemDef = HoN.GetItemDefinition(curItem:GetTypeName())
+      --Echo(tostring(curItem))
+      if curItem then
+        --Echo(curItem:GetName())
+        local bRecipeCheck = curItemDef:GetTypeID() ~= item:GetTypeID() or curItem:IsRecipe()
+        if curItem:GetTypeID() == item:GetTypeID() and not bRecipeCheck then
+          --Echo("Was true")
+          return true
+        end
       end
     end
   end
@@ -109,12 +111,14 @@ local function sellCheapestItem(unit, ignoreItems)
   local cost = 9999
   for slot = 1,#inventory,1 do
     local item = inventory[slot]
-    local itemname = HoN.GetItemDefinition(item:GetTypeName())
-    if item and not foundElementInList(itemname, ignoreItems) then
-      local itemCost = item:GetTotalCost()
-      if itemCost < cost then
-        index = slot
-        cost = itemCost
+    if item then
+      local itemname = HoN.GetItemDefinition(item:GetTypeName())
+      if item and not foundElementInList(itemname, ignoreItems) then
+        local itemCost = item:GetTotalCost()
+        if itemCost < cost then
+          index = slot
+          cost = itemCost
+        end
       end
     end
   end
@@ -181,16 +185,18 @@ local function checkInventory(unit, ItemsToBuy)
   --Lets just get inventory and traverse through the itemsbuy list >_>
   local inventory = unit:GetInventory(true)
   for slot = 1,#inventory,1 do
-    local curItem = inventory[slot]:GetTypeName()
-    local found = false
-    local foundIndx = -1
-    for slott = 1,#ItemsToBuy,1 do
-      if ItemsToBuy[slott] == curItem then
-        found = true
-        foundIndx = slott
+    if inventory[slot] then
+      local curItem = inventory[slot]:GetTypeName()
+      local found = false
+      local foundIndx = -1
+      for slott = 1,#ItemsToBuy,1 do
+        if ItemsToBuy[slott] == curItem then
+          found = true
+          foundIndx = slott
+        end
       end
+      tremove(ItemsToBuy, foundIndx)
     end
-    tremove(ItemsToBuy, foundIndx)
   end
 
 
