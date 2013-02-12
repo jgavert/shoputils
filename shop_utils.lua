@@ -96,14 +96,17 @@ local function hasFullInventory(unit, checkStashonly)
     inventory = unit:GetInventory(true)
     startNum = 7
   end
+  local count = 0
 
   for slot = startNum,#inventory,1 do
     local item = inventory[slot]
+    Echo(tostring(slot))
     if not item then
       return false
     end
+    count = count + 1
   end
-  return true
+  return count == 6
 end
 
 local function foundElementInList(item, list)
@@ -198,7 +201,8 @@ local function checkInventory(unit, ItemsToBuy)
   end
   -- remove the already bought items from the start
   -- only if we had even one item from the list
-  if hadEvenOneItem then
+  if hadEvenOneItem and hasFullInventory(unit)
+   then
     for slot = 1,emptyBeginning,1 do
       Echo("Removing: " .. ItemsToBuy[1])
       tremove(ItemsToBuy, 1)
