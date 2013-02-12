@@ -100,7 +100,7 @@ local function hasFullInventory(unit, checkStashonly)
 
   for slot = startNum,#inventory,1 do
     local item = inventory[slot]
-    Echo(tostring(slot))
+    --Echo(tostring(slot))
     if not item then
       return false
     end
